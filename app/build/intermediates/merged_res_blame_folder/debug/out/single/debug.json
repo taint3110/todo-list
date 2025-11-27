@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.example.todoapp-merged_res-28:/menu_main_menu.xml.flat",
+        "source": "com.example.todoapp-main-30:/menu/main_menu.xml"
+    },
+    {
+        "merged": "com.example.todoapp-merged_res-28:/layout_todo_item.xml.flat",
+        "source": "com.example.todoapp-main-30:/layout/todo_item.xml"
+    },
+    {
+        "merged": "com.example.todoapp-merged_res-28:/layout_activity_main.xml.flat",
+        "source": "com.example.todoapp-main-30:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.todoapp-merged_res-28:/menu_context_menu.xml.flat",
+        "source": "com.example.todoapp-main-30:/menu/context_menu.xml"
+    }
+]
