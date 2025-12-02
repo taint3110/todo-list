@@ -28,7 +28,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodoAdapter.TodoItemClickListener {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int READ_CONTACTS_REQUEST_CODE = 100;
     private static final int CONTACT_LOADER = 1;
@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TodoAdapter todoAdapter;
     private List<TodoItem> todoItems;
     private List<ContactItem> contacts;
+    private TodoRepo todoRepo;
+    private int selectedPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +48,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         todoListView = findViewById(R.id.todoListView);
         todoItems = new ArrayList<>();
         contacts = new ArrayList<>();
+        todoRepo = new TodoRepo(this);
         
-        // Add some sample items
-        todoItems.add(new TodoItem("Buy groceries"));
-        todoItems.add(new TodoItem("Finish homework"));
-        todoItems.add(new TodoItem("Call mom"));
+        // Load todos from database
+        loadTodosFromDatabase();
 
-        todoAdapter = new TodoAdapter(this, todoItems, this);
+        todoAdapter = new TodoAdapter(this, todoItems);
         todoListView.setAdapter(todoAdapter);
+
+        // Register for context menu
+        registerForContextMenu(todoListView);
 
         // Request contacts permission
         checkContactsPermission();
+    }
+
+    private void loadTodosFromDatabase() {
+        todoItems.clear();
+        todoItems.addAll(todoRepo.loadAll());
     }
 
     private void checkContactsPermission() {
@@ -152,20 +161,44 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onEditClick(int position) {
-        showEditTodoDialog(position);
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId() == R.id.todoListView) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            selectedPosition = info.position;
+            menu.setHeaderTitle("Todo Options");
+            menu.add(0, 1, 0, "Edit");
+            menu.add(0, 2, 1, "Assign Contact");
+            menu.add(0, 3, 2, "Delete");
+        }
     }
 
     @Override
-    public void onDeleteClick(int position) {
-        todoItems.remove(position);
-        todoAdapter.notifyDataSetChanged();
-        Toast.makeText(this, "Todo deleted", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onAssignContactClick(int position) {
-        showContactPickerDialog(position);
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        
+        if (id == 1) { // Edit
+            if (selectedPosition >= 0 && selectedPosition < todoItems.size()) {
+                showEditTodoDialog(selectedPosition);
+            }
+            return true;
+        } else if (id == 2) { // Assign Contact
+            if (selectedPosition >= 0 && selectedPosition < todoItems.size()) {
+                showContactPickerDialog(selectedPosition);
+            }
+            return true;
+        } else if (id == 3) { // Delete
+            if (selectedPosition >= 0 && selectedPosition < todoItems.size()) {
+                TodoItem item1 = todoItems.get(selectedPosition);
+                todoRepo.delete(item1.getId());
+                todoItems.remove(selectedPosition);
+                todoAdapter.notifyDataSetChanged();
+                Toast.makeText(this, "Todo deleted", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        }
+        
+        return super.onContextItemSelected(item);
     }
 
     private void showAddTodoDialog() {
@@ -179,7 +212,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         builder.setPositiveButton("Add", (dialog, which) -> {
             String todoText = input.getText().toString().trim();
             if (!todoText.isEmpty()) {
-                todoItems.add(new TodoItem(todoText));
+                TodoItem newItem = new TodoItem(todoText);
+                long id = todoRepo.addNew(newItem);
+                newItem.setId(id);
+                todoItems.add(newItem);
                 todoAdapter.notifyDataSetChanged();
                 Toast.makeText(this, "Todo added", Toast.LENGTH_SHORT).show();
             }
@@ -200,7 +236,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         builder.setPositiveButton("Save", (dialog, which) -> {
             String todoText = input.getText().toString().trim();
             if (!todoText.isEmpty()) {
-                todoItems.get(position).setText(todoText);
+                TodoItem item = todoItems.get(position);
+                item.setText(todoText);
+                todoRepo.update(item);
                 todoAdapter.notifyDataSetChanged();
                 Toast.makeText(this, "Todo updated", Toast.LENGTH_SHORT).show();
             }
@@ -229,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             TodoItem todoItem = todoItems.get(position);
             todoItem.setContactName(selectedContact.getName());
             todoItem.setContactPhone(selectedContact.getPhone());
+            todoRepo.update(todoItem);
             todoAdapter.notifyDataSetChanged();
             Toast.makeText(this, "Contact assigned", Toast.LENGTH_SHORT).show();
         });
@@ -248,6 +287,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (itemsToRemove.isEmpty()) {
             Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show();
         } else {
+            for (TodoItem item : itemsToRemove) {
+                todoRepo.delete(item.getId());
+            }
             todoItems.removeAll(itemsToRemove);
             todoAdapter.notifyDataSetChanged();
             Toast.makeText(this, itemsToRemove.size() + " item(s) deleted", Toast.LENGTH_SHORT).show();

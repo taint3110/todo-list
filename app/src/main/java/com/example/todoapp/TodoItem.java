@@ -1,16 +1,26 @@
 package com.example.todoapp;
 
 public class TodoItem {
+    private long id;
     private String text;
     private boolean isSelected;
     private String contactName;
     private String contactPhone;
 
     public TodoItem(String text) {
+        this.id = -1;
         this.text = text;
         this.isSelected = false;
         this.contactName = null;
         this.contactPhone = null;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getText() {
