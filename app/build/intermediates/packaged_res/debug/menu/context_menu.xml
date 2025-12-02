@@ -6,6 +6,10 @@
         android:title="Edit" />
     
     <item
+        android:id="@+id/context_assign_contact"
+        android:title="Assign Contact" />
+    
+    <item
         android:id="@+id/context_delete"
         android:title="Delete" />
 </menu>

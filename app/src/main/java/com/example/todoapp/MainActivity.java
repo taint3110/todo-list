@@ -1,15 +1,26 @@
 package com.example.todoapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -17,12 +28,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodoAdapter.TodoItemClickListener {
+
+    private static final int READ_CONTACTS_REQUEST_CODE = 100;
+    private static final int CONTACT_LOADER = 1;
 
     private ListView todoListView;
     private TodoAdapter todoAdapter;
     private List<TodoItem> todoItems;
-    private int selectedPosition = -1;
+    private List<ContactItem> contacts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,17 +45,86 @@ public class MainActivity extends AppCompatActivity {
 
         todoListView = findViewById(R.id.todoListView);
         todoItems = new ArrayList<>();
+        contacts = new ArrayList<>();
         
         // Add some sample items
         todoItems.add(new TodoItem("Buy groceries"));
         todoItems.add(new TodoItem("Finish homework"));
         todoItems.add(new TodoItem("Call mom"));
 
-        todoAdapter = new TodoAdapter(this, todoItems);
+        todoAdapter = new TodoAdapter(this, todoItems, this);
         todoListView.setAdapter(todoAdapter);
 
-        // Register for context menu
-        registerForContextMenu(todoListView);
+        // Request contacts permission
+        checkContactsPermission();
+    }
+
+    private void checkContactsPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_CONTACTS},
+                    READ_CONTACTS_REQUEST_CODE);
+        } else {
+            loadContacts();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == READ_CONTACTS_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                loadContacts();
+                Toast.makeText(this, "Contacts permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Contacts permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void loadContacts() {
+        LoaderManager.getInstance(this).restartLoader(CONTACT_LOADER, null, this);
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        if (id == CONTACT_LOADER) {
+            String[] SELECTED_FIELDS = new String[]{
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+            };
+            return new CursorLoader(this,
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    SELECTED_FIELDS,
+                    null,
+                    null,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        if (loader.getId() == CONTACT_LOADER) {
+            contacts.clear();
+            if (data != null) {
+                while (!data.isClosed() && data.moveToNext()) {
+                    String phone = data.getString(1);
+                    String name = data.getString(2);
+                    contacts.add(new ContactItem(name, phone));
+                }
+                data.close();
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        // Loader reset
     }
 
     @Override
@@ -69,35 +152,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        if (v.getId() == R.id.todoListView) {
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            selectedPosition = info.position;
-            getMenuInflater().inflate(R.menu.context_menu, menu);
-            menu.setHeaderTitle("Todo Options");
-        }
+    public void onEditClick(int position) {
+        showEditTodoDialog(position);
     }
 
     @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        
-        if (id == R.id.context_edit) {
-            if (selectedPosition >= 0 && selectedPosition < todoItems.size()) {
-                showEditTodoDialog(selectedPosition);
-            }
-            return true;
-        } else if (id == R.id.context_delete) {
-            if (selectedPosition >= 0 && selectedPosition < todoItems.size()) {
-                todoItems.remove(selectedPosition);
-                todoAdapter.notifyDataSetChanged();
-                Toast.makeText(this, "Todo deleted", Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        }
-        
-        return super.onContextItemSelected(item);
+    public void onDeleteClick(int position) {
+        todoItems.remove(position);
+        todoAdapter.notifyDataSetChanged();
+        Toast.makeText(this, "Todo deleted", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAssignContactClick(int position) {
+        showContactPickerDialog(position);
     }
 
     private void showAddTodoDialog() {
@@ -136,6 +204,33 @@ public class MainActivity extends AppCompatActivity {
                 todoAdapter.notifyDataSetChanged();
                 Toast.makeText(this, "Todo updated", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    private void showContactPickerDialog(int position) {
+        if (contacts.isEmpty()) {
+            Toast.makeText(this, "No contacts available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Contact");
+
+        String[] contactNames = new String[contacts.size()];
+        for (int i = 0; i < contacts.size(); i++) {
+            contactNames[i] = contacts.get(i).toString();
+        }
+
+        builder.setItems(contactNames, (dialog, which) -> {
+            ContactItem selectedContact = contacts.get(which);
+            TodoItem todoItem = todoItems.get(position);
+            todoItem.setContactName(selectedContact.getName());
+            todoItem.setContactPhone(selectedContact.getPhone());
+            todoAdapter.notifyDataSetChanged();
+            Toast.makeText(this, "Contact assigned", Toast.LENGTH_SHORT).show();
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());

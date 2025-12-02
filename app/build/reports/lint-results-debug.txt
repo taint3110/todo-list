@@ -1,0 +1,90 @@
+D:\projects\todo-list\app\build.gradle:12: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
+        targetSdk 33
+        ~~~~~~~~~~~~
+
+   Explanation for issues of type "OldTargetApi":
+   When your application runs on a version of Android that is more recent than
+   your targetSdkVersion specifies that it has been tested with, various
+   compatibility modes kick in. This ensures that your application continues
+   to work, but it may look out of place. For example, if the targetSdkVersion
+   is less than 14, your app may get an option button in the UI.
+
+   To fix this issue, set the targetSdkVersion to the highest available value.
+   Then test your app to make sure everything works correctly. You may want to
+   consult the compatibility notes to see what changes apply to each version
+   you are adding support for:
+   https://developer.android.com/reference/android/os/Build.VERSION_CODES.html
+   as well as follow this guide:
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.
+   html
+
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.html
+
+D:\projects\todo-list\app\build.gradle:31: Warning: A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.1 [GradleDependency]
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:\projects\todo-list\app\build.gradle:32: Warning: A newer version of com.google.android.material:material than 1.9.0 is available: 1.13.0 [GradleDependency]
+    implementation 'com.google.android.material:material:1.9.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+D:\projects\todo-list\app\src\main\java\com\example\todoapp\TodoAdapter.java:43: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            contactTextView.setText("📞 " + todoItem.getContactName() + " - " + todoItem.getContactPhone());
+                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SetTextI18n":
+   When calling TextView#setText
+   * Never call Number#toString() to format numbers; it will not handle
+   fraction separators and locale-specific digits properly. Consider using
+   String#format with proper format specifications (%d or %f) instead.
+   * Do not pass a string literal (e.g. "Hello") to display text. Hardcoded
+   text can not be properly translated to other languages. Consider using
+   Android resource strings instead.
+   * Do not build messages by concatenating text chunks. Such messages can not
+   be properly translated.
+
+   https://developer.android.com/guide/topics/resources/localization.html
+
+D:\projects\todo-list\app\src\main\res\menu\context_menu.xml:6: Warning: Hardcoded string "Edit", should use @string resource [HardcodedText]
+        android:title="Edit" />
+        ~~~~~~~~~~~~~~~~~~~~
+D:\projects\todo-list\app\src\main\res\menu\context_menu.xml:10: Warning: Hardcoded string "Assign Contact", should use @string resource [HardcodedText]
+        android:title="Assign Contact" />
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:\projects\todo-list\app\src\main\res\menu\context_menu.xml:14: Warning: Hardcoded string "Delete", should use @string resource [HardcodedText]
+        android:title="Delete" />
+        ~~~~~~~~~~~~~~~~~~~~~~
+D:\projects\todo-list\app\src\main\res\menu\main_menu.xml:7: Warning: Hardcoded string "New", should use @string resource [HardcodedText]
+        android:title="New"
+        ~~~~~~~~~~~~~~~~~~~
+D:\projects\todo-list\app\src\main\res\menu\main_menu.xml:13: Warning: Hardcoded string "Delete", should use @string resource [HardcodedText]
+        android:title="Delete"
+        ~~~~~~~~~~~~~~~~~~~~~~
+D:\projects\todo-list\app\src\main\res\menu\main_menu.xml:19: Warning: Hardcoded string "Select All", should use @string resource [HardcodedText]
+        android:title="Select All"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:\projects\todo-list\app\src\main\res\layout\todo_item.xml:25: Warning: Hardcoded string "Todo item", should use @string resource [HardcodedText]
+            android:text="Todo item" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "HardcodedText":
+   Hardcoding text attributes directly in layout files is bad for several
+   reasons:
+
+   * When creating configuration variations (for example for landscape or
+   portrait) you have to repeat the actual text (and keep it up to date when
+   making changes)
+
+   * The application cannot be translated to other languages by just adding
+   new translations for existing string resources.
+
+   There are quickfixes to automatically extract this hardcoded string into a
+   resource lookup.
+
+0 errors, 11 warnings

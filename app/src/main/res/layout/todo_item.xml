@@ -11,12 +11,52 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp" />
 
-    <TextView
-        android:id="@+id/todoTextView"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textSize="16sp"
-        android:text="Todo item" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/todoTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="Todo item" />
+
+        <TextView
+            android:id="@+id/contactTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:visibility="gone"
+            android:layout_marginTop="4dp" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btnAssignContact"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_call"
+        android:contentDescription="Assign Contact" />
+
+    <ImageButton
+        android:id="@+id/btnEdit"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_edit"
+        android:contentDescription="Edit" />
+
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_delete"
+        android:contentDescription="Delete" />
 
 </LinearLayout>

@@ -2999,6 +2999,9 @@ id beginning
 id blocking
 id bottom
 id bounce
+id btnAssignContact
+id btnDelete
+id btnEdit
 id buttonPanel
 id cancel_button
 id center
@@ -3019,9 +3022,11 @@ id clockwise
 id collapseActionView
 id compress
 id confirm_button
+id contactTextView
 id container
 id content
 id contentPanel
+id context_assign_contact
 id context_delete
 id context_edit
 id contiguous

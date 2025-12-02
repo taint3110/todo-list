@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.1.0" type="incidents">
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Todo item&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*sourceProvider*0*resDir*0}/layout/todo_item.xml"
+            line="25"
+            column="13"
+            startOffset="847"
+            endLine="25"
+            endColumn="37"
+            endOffset="871"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Edit&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*sourceProvider*0*resDir*0}/menu/context_menu.xml"
+            line="6"
+            column="9"
+            startOffset="172"
+            endLine="6"
+            endColumn="29"
+            endOffset="192"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Assign Contact&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*sourceProvider*0*resDir*0}/menu/context_menu.xml"
+            line="10"
+            column="9"
+            startOffset="272"
+            endLine="10"
+            endColumn="39"
+            endOffset="302"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Delete&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*sourceProvider*0*resDir*0}/menu/context_menu.xml"
+            line="14"
+            column="9"
+            startOffset="374"
+            endLine="14"
+            endColumn="31"
+            endOffset="396"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;New&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*sourceProvider*0*resDir*0}/menu/main_menu.xml"
+            line="7"
+            column="9"
+            startOffset="225"
+            endLine="7"
+            endColumn="28"
+            endOffset="244"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Delete&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*sourceProvider*0*resDir*0}/menu/main_menu.xml"
+            line="13"
+            column="9"
+            startOffset="402"
+            endLine="13"
+            endColumn="31"
+            endOffset="424"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Select All&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*sourceProvider*0*resDir*0}/menu/main_menu.xml"
+            line="19"
+            column="9"
+            startOffset="589"
+            endLine="19"
+            endColumn="35"
+            endOffset="615"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*sourceProvider*0*javaDir*0}/com/example/todoapp/TodoAdapter.java"
+            line="43"
+            column="37"
+            startOffset="1393"
+            endLine="43"
+            endColumn="107"
+            endOffset="1463"/>
+    </incident>
+
+    <incident
+        id="OldTargetApi"
+        severity="warning"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details.">
+        <fix-replace
+            description="Update targetSdkVersion to 36"
+            oldString="33"
+            replacement="36"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="12"
+            column="9"
+            startOffset="212"
+            endLine="12"
+            endColumn="21"
+            endOffset="224"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.1">
+        <fix-replace
+            description="Change to 1.7.1"
+            family="Update versions"
+            oldString="1.6.1"
+            replacement="1.7.1"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="31"
+            column="20"
+            startOffset="659"
+            endLine="31"
+            endColumn="56"
+            endOffset="695"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.android.material:material than 1.9.0 is available: 1.13.0">
+        <fix-replace
+            description="Change to 1.13.0"
+            family="Update versions"
+            oldString="1.9.0"
+            replacement="1.13.0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="32"
+            column="20"
+            startOffset="716"
+            endLine="32"
+            endColumn="64"
+            endOffset="760"/>
+    </incident>
+
+</incidents>

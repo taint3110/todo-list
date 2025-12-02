@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.1.0" type="partial_results">
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.example.todoapp.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <entry
+            name="model"
+            string="id[menu_select_all(U),menu_new(U),menu_delete(U),context_delete(U),todoCheckBox(U),todoTextView(U),context_edit(U),context_assign_contact(U),contactTextView(U),todoListView(U)],layout[todo_item(U),activity_main(U)],menu[context_menu(U),main_menu(U)],style[Theme_AppCompat_Light_DarkActionBar(R)];;;;"/>
+    </map>
+
+</incidents>

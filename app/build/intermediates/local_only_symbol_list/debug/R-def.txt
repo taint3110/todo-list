@@ -1,5 +1,10 @@
 R_DEF: Internal format may change without notice
 local
+id btnAssignContact
+id btnDelete
+id btnEdit
+id contactTextView
+id context_assign_contact
 id context_delete
 id context_edit
 id menu_delete

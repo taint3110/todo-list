@@ -8,6 +8,8 @@
         android:minSdkVersion="21"
         android:targetSdkVersion="33" />
 
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <permission
         android:name="com.example.todoapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
@@ -22,7 +24,6 @@
         android:icon="@android:drawable/ic_menu_agenda"
         android:label="Todo App"
         android:supportsRtl="true"
-        android:testOnly="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
         <activity
             android:name="com.example.todoapp.MainActivity"
